@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
-export class Admin {
+export class Student {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,7 +11,6 @@ export class Admin {
   @Field()
   @Column()
   firstName: string;
-
 
   @Field()
   @Column()
@@ -31,18 +30,23 @@ export class Admin {
 
 
   @Field()
-  @Column({ default: false })
-  is_creator: boolean;
+  @Column({default:false})
+  is_active:boolean
 
   @Field()
-  @Column({ default: false })
-  is_active: boolean;
-  
+  @Column()
+  gender:string
 
   @Field()
-  @Column({ default: "" })
-  refresh_token: string;
+  @Column()
+  dateOfBirth:Date
+
+  @Field()
+  @Column()
+  avatar_url:string
+
+  @Field()
+  @Column({default:""})
+  refresh_token:string
 }
-
-
 

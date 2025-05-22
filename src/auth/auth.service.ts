@@ -7,13 +7,16 @@ import * as bcrypt from 'bcrypt'
 import { Teacher } from '../teacher/entities/teacher.entity';
 import { Request, Response } from 'express';
 import { Admin } from '../admin/entities/admin.entity';
+import { Student } from '../students/entities/student.entity';
+import { StudentsService } from '../students/students.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly adminService: AdminService,
-    private readonly teacherService: TeacherService
+    private readonly teacherService: TeacherService,
+    private readonly studentService: StudentsService
   ) {}
 
   //=====================================ALL AUTHENTIFICATION FOR TEACHER=======================================
@@ -170,10 +173,8 @@ export class AuthService {
       secret: process.env.REFRESH_TOKEN_KEY,
     });
     const admin = await this.adminService.findOne(payload.id);
-    if (!admin|| !admin.refresh_token) {
-      throw new BadRequestException(
-        "Admin Not Found or have not log in yet!"
-      );
+    if (!admin || !admin.refresh_token) {
+      throw new BadRequestException("Admin Not Found or have not log in yet!");
     }
     const isValid = await bcrypt.compare(refresh_token, admin.refresh_token);
     if (!isValid) throw new UnauthorizedException("Refresh Token noto'g'ri");
@@ -182,6 +183,90 @@ export class AuthService {
     const hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
     admin.refresh_token = hashed_refresh_token;
     await this.adminService.save(admin);
+
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+      httpOnly: true,
+    });
+    return { RefreshToken: refreshToken };
+  }
+
+  //=====================================ALL AUTHENTIFICATION FOR STUDENT=======================================
+  async generateTokensforStudent(student:Student) {
+    const payload = {
+      id: student.id,
+      email: student.email,
+      is_active: student.is_active,
+    };
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: process.env.ACCESS_TOKEN_KEY,
+        expiresIn: process.env.ACCESS_TOKEN_TIME,
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: process.env.REFRESH_TOKEN_KEY,
+        expiresIn: process.env.REFRESH_TOKEN_TIME,
+      }),
+    ]);
+    return { accessToken, refreshToken };
+  }
+  async signInStudent(signInDto: signInDto, res: Response) {
+    const student= await this.studentService.findByEmail(signInDto.email);
+    if (!student) {
+      throw new BadRequestException("There is not student with the given email!");
+    }
+    const isValid = await bcrypt.compare(signInDto.password, student.password);
+    if (!isValid) {
+      throw new BadRequestException("Email yoki Password Noto'g'ri");
+    }
+    const { accessToken, refreshToken } =
+      await this.generateTokensforStudent(student);
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: Number(process.env.COOKIE_TIME),
+      httpOnly: true,
+    });
+    const hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
+    student.refresh_token = hashed_refresh_token;
+    await this.studentService.save(student);
+    return { message: `Welcome ${student.firstName}!`, accessToken };
+  }
+
+  async signOutStudent(req: Request, res: Response) {
+    const refreshToken = req.cookies["refreshToken"];
+    if (!refreshToken) {
+      throw new BadRequestException("Refresh Token not available!");
+    }
+    const student = await this.studentService.findByToken(refreshToken);
+    if (!student) {
+      throw new BadRequestException("Token Not Found");
+    }
+    student.refresh_token = "";
+    res.clearCookie("refreshToken");
+    await this.studentService.save(student);
+    return {
+      message: `Dear ${student.firstName} You logged out successfully!`,
+    };
+  }
+
+  async refreshTokenStudent(req: Request, res: Response) {
+    const refresh_token = req.cookies["refreshToken"];
+    if (!refresh_token) {
+      throw new BadRequestException("Refresh Token not available!");
+    }
+    const payload = await this.jwtService.verify(refresh_token, {
+      secret: process.env.REFRESH_TOKEN_KEY,
+    });
+    const student = await this.studentService.findOne(payload.id);
+    if (!student || !student.refresh_token) {
+      throw new BadRequestException("Admin Not Found or have not log in yet!");
+    }
+    const isValid = await bcrypt.compare(refresh_token, student.refresh_token);
+    if (!isValid) throw new UnauthorizedException("Refresh Token noto'g'ri");
+    const { accessToken, refreshToken } =
+      await this.generateTokensforStudent(student);
+    const hashed_refresh_token = await bcrypt.hash(refreshToken, 7);
+    student.refresh_token = hashed_refresh_token;
+    await this.studentService.save(student);
 
     res.cookie("refreshToken", refreshToken, {
       maxAge: Number(process.env.COOKIE_TIME),

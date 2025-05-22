@@ -53,4 +53,27 @@ export class AuthController {
   ) {
     return this.authService.refreshTokenAdmin(req, res);
   }
+  @Post("sign-in-student")
+  async signInStudent(
+    @Body() signInDto: signInDto,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.signInStudent(signInDto, res);
+  }
+
+  @Post("sign-out-student")
+  async signOutStudent(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.signOutStudent(req, res);
+  }
+  @Get("refresh-token-student")
+  async getRefreshStudent(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ) {
+    return this.authService.refreshTokenStudent(req, res);
+  }
 }
+

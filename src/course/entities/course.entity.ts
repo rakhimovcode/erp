@@ -3,46 +3,28 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
-export class Admin {
+export class Course {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
   @Column()
-  firstName: string;
-
-
-  @Field()
-  @Column()
-  lastName: string;
+  title: string;
 
   @Field()
   @Column()
-  email: string;
+  desciption: string;
 
   @Field()
   @Column()
-  phone: string;
+  price: number;
 
   @Field()
   @Column()
-  password: string;
-
-
-  @Field()
-  @Column({ default: false })
-  is_creator: boolean;
+  duration: number;
 
   @Field()
-  @Column({ default: false })
-  is_active: boolean;
-  
-
-  @Field()
-  @Column({ default: "" })
-  refresh_token: string;
+  @Column()
+  lessonsInWeek: number
 }
-
-
-
