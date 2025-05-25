@@ -10,6 +10,13 @@ import { StudentsModule } from './students/students.module';
 import { CourseModule } from './course/course.module';
 import { GraphQLModule } from "@nestjs/graphql";
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
+import { GroupModule } from './group/group.module';
+import { Course } from "./course/entities/course.entity";
+import { Group } from "./group/entities/group.entity";
+import { ScheduleModule } from './schedule/schedule.module';
+import { AttendanceModule } from './attendance/attendance.module';
+import { StudentGroupsModule } from './student-groups/student-groups.module';
+import { TeacherGroupsModule } from './teacher-groups/teacher-groups.module';
 
 @Module({
   imports: [
@@ -29,7 +36,6 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
       database: process.env.DB_NAME,
       synchronize: true,
       autoLoadEntities: true,
-      entities: [Teacher,Admin],
       logging: true,
     }),
 
@@ -38,6 +44,11 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
     AuthModule,
     StudentsModule,
     CourseModule,
+    GroupModule,
+    ScheduleModule,
+    AttendanceModule,
+    StudentGroupsModule,
+    TeacherGroupsModule,
   ],
   controllers: [],
   providers: [],

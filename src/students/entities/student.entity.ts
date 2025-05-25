@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Attendance } from "../../attendance/entities/attendance.entity";
+import { StudentGroup } from "../../student-groups/entities/student-group.entity";
 
 @ObjectType()
 @Entity()
@@ -28,25 +30,32 @@ export class Student {
   @Column()
   password: string;
 
-
   @Field()
-  @Column({default:false})
-  is_active:boolean
-
-  @Field()
-  @Column()
-  gender:string
+  @Column({ default: false })
+  is_active: boolean;
 
   @Field()
   @Column()
-  dateOfBirth:Date
+  gender: string;
 
   @Field()
   @Column()
-  avatar_url:string
+  dateOfBirth: Date;
 
   @Field()
-  @Column({default:""})
-  refresh_token:string
+  @Column()
+  avatar_url: string;
+
+  @Field()
+  @Column({ default: "" })
+  refresh_token: string;
+
+  @OneToMany(() => Attendance, (attendance) => attendance.student)
+  attendance: Attendance[];
+
+  @OneToMany(() => StudentGroup, (studentgroup) => studentgroup.student)
+  studentgroup: StudentGroup[];
 }
+
+
 

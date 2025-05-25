@@ -14,6 +14,12 @@ type Admin {
   refresh_token: String!
 }
 
+type Attendance {
+  date: DateTime!
+  id: ID!
+  status: String!
+}
+
 type Course {
   desciption: String!
   duration: Float!
@@ -32,12 +38,27 @@ input CreateAdminDto {
   phone: String!
 }
 
+input CreateAttendanceDto {
+  date: DateTime!
+  scheduleId: Float!
+  status: String!
+  studentId: Float!
+}
+
 input CreateCourseDto {
   desciption: String!
   duration: Float!
   lessonsInWeek: Float!
   price: Float!
   title: String!
+}
+
+input CreateGroupDto {
+  courseId: Float!
+  endDate: String!
+  name: String!
+  startDate: String!
+  status: String!
 }
 
 input CreateStudentDto {
@@ -53,6 +74,13 @@ input CreateStudentDto {
   phone: String!
 }
 
+input CreateStudentGroupDto {
+  groupId: Float!
+  is_active: Boolean!
+  period: DateTime!
+  studentId: ID!
+}
+
 input CreateTeacherDto {
   confirm_password: String!
   email: String!
@@ -64,35 +92,69 @@ input CreateTeacherDto {
   subject: String!
 }
 
+input CreateTeacherGroupDto {
+  groupId: Float!
+  teacherId: Float!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
+type Group {
+  course: ID!
+  endDate: String!
+  id: ID!
+  name: String!
+  startDate: String!
+  status: String!
+}
+
 type Mutation {
   create(createAdmin: CreateAdminDto!): Admin!
+  createAttendance(createAttendance: CreateAttendanceDto!): Attendance!
   createCourse(createCourse: CreateCourseDto!): Course!
+  createGroup(createGroup: CreateGroupDto!): Group!
   createStudent(createStudent: CreateStudentDto!): Student!
+  createStudentGroup(createStudentGroup: CreateStudentGroupDto!): StudentGroup!
   createTeacher(createUser: CreateTeacherDto!): Teacher!
+  createTeacherGroup(createGroup: CreateTeacherGroupDto!): TeacherGroup!
   remove(id: Float!): Float!
+  removeAttendance(id: Float!): Attendance!
   removeCourse(id: Float!): Float!
+  removeGroup(id: Float!): Float!
   removeStudent(id: Float!): Float!
+  removeStudentGroup(id: Float!): StudentGroup!
   removeTeacher(id: ID!): Float!
+  removeTeacherGroup(id: Float!): Float!
   updateAdmin(id: ID!, updateAdmin: UpdateAdminDto!): Admin!
+  updateAttendance(id: Float!, updateAttendance: UpdateAttendanceDto!): Attendance!
   updateCourse(id: Float!): Course!
+  updateGroup(id: Float!, updateGroup: UpdateGroupDto!): Group!
   updateStudent(id: Float!, updateStudent: UpdateStudentDto!): Student!
+  updateStudentGroup(id: Float!, updateStudentGroup: UpdateStudentGroupDto!): StudentGroup!
   updateTeacher(id: ID!, updateTeacher: UpdateTeacherDto!): Teacher!
+  updateTeacherGroup(id: Float!, updateTeacherGroup: UpdateTeacherGroupDto!): TeacherGroup!
 }
 
 type Query {
   findAllAdmins: [Admin!]!
+  findAllAttendance: [Attendance!]!
   findAllCourse: [Course!]!
+  findAllGroup: [Group!]!
   findAllStudent: [Student!]!
+  findAllStudentGroup: [StudentGroup!]!
   findAllTeacher: [Teacher!]!
+  findAllTeacherGroups: [TeacherGroup!]!
   findOneAdmin(id: Float!): Admin!
+  findOneAttendance(id: Float!): Attendance!
   findOneCourse(id: Float!): Course!
+  findOneGroup(id: Float!): Group!
   findOneStudent(id: Float!): Student!
+  findOneStudentGroup(id: Float!): StudentGroup!
   findOneTeacher(id: Float!): Teacher!
+  findOneTeacherGroup(id: Float!): TeacherGroup!
 }
 
 type Student {
@@ -109,6 +171,12 @@ type Student {
   refresh_token: String!
 }
 
+type StudentGroup {
+  id: ID!
+  is_active: Boolean!
+  period: DateTime!
+}
+
 type Teacher {
   email: String!
   firstName: String!
@@ -122,12 +190,31 @@ type Teacher {
   subject: String!
 }
 
+type TeacherGroup {
+  id: ID!
+}
+
 input UpdateAdminDto {
   email: String!
   firstName: String!
   lastName: String!
   password: String!
   phone: String!
+}
+
+input UpdateAttendanceDto {
+  date: DateTime!
+  scheduleId: Float!
+  status: String!
+  studentId: Float!
+}
+
+input UpdateGroupDto {
+  courseId: Float!
+  endDate: String!
+  name: String!
+  startDate: String!
+  status: String!
 }
 
 input UpdateStudentDto {
@@ -143,6 +230,13 @@ input UpdateStudentDto {
   phone: String!
 }
 
+input UpdateStudentGroupDto {
+  groupId: Float!
+  is_active: Boolean!
+  period: DateTime!
+  studentId: ID!
+}
+
 input UpdateTeacherDto {
   confirm_password: String!
   email: String!
@@ -152,4 +246,9 @@ input UpdateTeacherDto {
   phone: String!
   role: String!
   subject: String!
+}
+
+input UpdateTeacherGroupDto {
+  groupId: Float!
+  teacherId: Float!
 }
