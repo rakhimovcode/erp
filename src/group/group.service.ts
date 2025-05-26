@@ -17,7 +17,7 @@ export class GroupService {
    if(!course){
     throw new BadRequestException("Course not found with the given ID")
    }
-   const group = this.groupRepo.create({course:course,...otherDto})
+   const group = this.groupRepo.create({course,...otherDto})
    return this.groupRepo.save(group)
   }
 

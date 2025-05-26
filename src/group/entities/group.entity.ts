@@ -4,6 +4,8 @@ import { Course } from "../../course/entities/course.entity";
 import { Schedule } from "../../schedule/entities/schedule.entity";
 import { StudentGroup } from "../../student-groups/entities/student-group.entity";
 import { TeacherGroup } from "../../teacher-groups/entities/teacher-group.entity";
+import { Homework } from "../../homework/entities/homework.entity";
+
 @ObjectType()
 @Entity()
 export class Group {
@@ -39,5 +41,8 @@ export class Group {
 
   @OneToMany(() => TeacherGroup, (teachergroup) => teachergroup.teacher)
   teachergroup: TeacherGroup[];
+
+  @OneToMany(() => Homework, (homework) => homework.group)
+  homework:Homework[]
 }
 

@@ -9,10 +9,12 @@ import { GroupResolver } from './group.resolver';
 import { Schedule } from '../schedule/entities/schedule.entity';
 import { StudentGroup } from '../student-groups/entities/student-group.entity';
 import { TeacherGroup } from '../teacher-groups/entities/teacher-group.entity';
+import { Homework } from '../homework/entities/homework.entity';
+
 
 @Module({
   imports:[TypeOrmModule.forFeature([
-    Group,Course,Schedule,StudentGroup,TeacherGroup
+    Group,Course,Schedule,StudentGroup,TeacherGroup,Homework
   ]),CourseModule],
   controllers: [GroupController],
   providers: [GroupService,GroupResolver],
